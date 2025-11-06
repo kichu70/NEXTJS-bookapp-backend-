@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 // --------------------book details  schema-------------------------
 const BooksSchema = new mongoose.Schema(
   {
-    bookname: {
+    book_name: {
       type: String,
       required: true,
     },
@@ -33,7 +33,7 @@ const BooksSchema = new mongoose.Schema(
       ref: "userData",
       required: true,
     },
-    isDeleted: {
+    is_deleted: {
       type: Boolean,
       default: false,
     },
@@ -41,7 +41,7 @@ const BooksSchema = new mongoose.Schema(
       {value: {type: Number, min:1,max:5 },
        user: { type: mongoose.Schema.Types.ObjectId, ref: "userData" } },
     ],
-    avarageRating: {
+    avarage_rating: {
       type: Number,
       default: 1.5,
     },

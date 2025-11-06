@@ -1,5 +1,5 @@
 import express from "express"
-import { AddUser, AllUser, DeletUser, login, UpdateUser } from "../controllers/userController.js";
+import { AddUser, login, UpdateUser } from "../controllers/userController.js";
 import { check } from "express-validator";
 import { verifyToken } from "../middlewares/verifyToken.js";
 
@@ -8,7 +8,7 @@ const router =express.Router();
 
 router.post("/add-user",
      [
-    check("username")
+    check("name")
     .notEmpty()
     .withMessage("username must Required")
     .isLength({ min: 3 })
@@ -25,7 +25,6 @@ router.post("/add-user",
     .withMessage("Email required")
   ],AddUser)
 
-router.get("/",AllUser)
 
 
 router.post("/login",[
@@ -43,9 +42,7 @@ router.post("/login",[
 
 router.use(verifyToken);
 
-
-
 router.put("/update",UpdateUser)
-router.put("/delete",DeletUser)
+
 
 export default router;

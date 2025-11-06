@@ -7,6 +7,7 @@ import connect from './connection/connectDB.js'
 import UserRouter from './routes/userRoute.js'
 import BooksRouter from './routes/booksRoute.js'
 import paymentRouter from './routes/paymentRoute.js'
+import AdminRouter from './routes/adminRoute.js'
 import path from 'path'
 
 const app = express()
@@ -21,6 +22,7 @@ app.use("/uploads",express.static(path.join(process.cwd(),"uploads")))
 app.use('/user',UserRouter)
 app.use("/Books",BooksRouter)
 app.use("/payment",paymentRouter);
+app.use("/admin",AdminRouter);
 const PORT = process.env.PORT
 
 server.listen(PORT,()=>{

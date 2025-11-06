@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 export const AddUser = async (req, res) => {
   try {
-    const { username, password, email } = req.body;
+    const { name, password, email } = req.body;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -20,7 +20,7 @@ export const AddUser = async (req, res) => {
       });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const UserExist = await user.findOne({ username });
+    const UserExist = await user.findOne({ name });
     if (UserExist) {
       return res.status(401).json({ message: "username already exist" });
     }
@@ -29,9 +29,10 @@ export const AddUser = async (req, res) => {
       return res.status(401).json({ message: "email already exist" });
     }
     const newUser = await user.create({
-      username,
+      name,
       password: hashedPassword,
       email,
+      role:"User"
     });
     res.status(201).json({ message: "data added", data: newUser });
   } catch (err) {
@@ -40,22 +41,12 @@ export const AddUser = async (req, res) => {
   }
 };
 
-export const AllUser = async (req, res) => {
-  try {
-    const data = await user.find({ isDeleted: false });
-    res.status(201).json({ message: "data fetched", data: data });
-  } catch (err) {
-    console.log(err, "error is in the view all user in backend");
-    res
-      .status(500)
-      .json({ message: "server is error to do fetch user backend" });
-  }
-};
+
 
 
 
 export const login =async(req,res)=>{
-    const{username,email,password}=req.body
+    const{email,password}=req.body
 
     const errors =validationResult(req)
     if(!errors.isEmpty()){
@@ -69,7 +60,7 @@ export const login =async(req,res)=>{
             msg:FieldErrors
         })
     }
-    const user1 =await user.findOne({$or:[{email:email},{username:username}],isDeleted:false})
+    const user1 =await user.findOne({$or:[{email:email},],is_deleted:false,verify:true})
     if(!user1){
         console.log("user not found")
         return res.status(404).json({message:"user not found"})
@@ -85,9 +76,9 @@ export const login =async(req,res)=>{
     }
     if(isMatch){
         const token = jwt.sign(
-            {id:user1._id,username:user1.username},process.env.JWT_SECRET
+            {id:user1._id,role:user1.role,name:user1.name,},process.env.JWT_SECRET, { expiresIn: "1d" }
         )
-        const userData={id:user1._id,username:user1.username,email:user1.email}
+        const userData={id:user1._id,name:user1.name,email:user1.email,role:user1.role}
         res.json({
             message:"login successfull",
             AccesToken:token,
@@ -112,8 +103,8 @@ export const UpdateUser = async (req, res) => {
       return res.status(404).json({ message: "user not found" });
     }
     
-    const { username, password } = req.body;
-    const UserExist = await user.findOne({username})
+    const { name, password } = req.body;
+    const UserExist = await user.findOne({name})
     if (UserExist) {
       return res.status(401).json({ message: "username already exist" });
     }
@@ -125,7 +116,7 @@ export const UpdateUser = async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const update = await user.findByIdAndUpdate(userId, 
-      {username,
+      {name,
       password: hashedPassword,}
       ,{new:true}
     );
@@ -138,20 +129,3 @@ export const UpdateUser = async (req, res) => {
 };
 
 
-export const DeletUser =async(req,res)=>{
-  try{
-    const userId =req.user.id
-    if(!userId){
-      return res.status(401).json({message:"user not found"})
-    }
-    const deleted =await user.findByIdAndUpdate(userId,{isDeleted:true},{new:true})
-    if(!deleted){
-      return res.status(401).json({message:"data cant delete"})
-    }
-    res.status(201).json({message:"user have been deleted",data:deleted})
-  }
-  catch(err){
-    console.log(err,"error is in the delete function")
-    res.status(500).json({message:"server is error in the detele"})
-  }
-}

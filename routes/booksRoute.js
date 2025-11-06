@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config()
 
 import express from "express"
-import { AddBook, addrating, allBooks, deleteBook, getTopest, newBooks, oldBooks, sinlgeBook, UpdateBook } from '../controllers/booksController.js';
+import { AddBook, addrating, allBooks, deleteBook, getTopest, newBooks, oldBooks, sinlgeBook, updateBook } from '../controllers/booksController.js';
 import { upload } from '../middlewares/multerFileUploads.js';
 import { check } from 'express-validator';
 import { verifyToken } from '../middlewares/verifyToken.js';
@@ -18,7 +18,7 @@ router.post("/add-book",
     upload.array("image",10)
     ,
     [
-    check("bookname")
+    check("book_name")
         .notEmpty().withMessage("Name Requierd")
         .isLength({min:3}).withMessage("length need more than 3 "),
     check("author")
@@ -34,7 +34,7 @@ router.post("/add-book",
         .isIn(["New", "Used"]).withMessage("Category must be either 'New' or 'Used'"),
     ],AddBook)
 router.put("/upadte-book",[
-        check("bookname")
+        check("book_name")
         .optional()
         .isLength({min:3}).withMessage("length need more than 3 "),
     check("author")
@@ -52,7 +52,7 @@ router.put("/upadte-book",[
         .notEmpty().withMessage("Category is required")
         .isIn(["New", "Used"]).withMessage("Category must be either 'New' or 'Used'"),  
     
-],UpdateBook)
+],updateBook)
 router.put("/delete-book",deleteBook)
 router.get("/used-book",oldBooks)
 router.get("/new-book",newBooks)
