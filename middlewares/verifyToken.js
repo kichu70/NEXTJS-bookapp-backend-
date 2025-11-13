@@ -7,7 +7,7 @@ export const verifyToken =(req,res,next )=>{
     const token =authHeader && authHeader.split(" ")[1];
 
     if(!token){
-        return res.status(400).json({message:"User not authenticated"})
+        return res.status(400).json({message:"user is  not authenticated from verifytoken "})
     } else {
         try{
             const decoded = jwt.verify(token,process.env.JWT_SECRET)

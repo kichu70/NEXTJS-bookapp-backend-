@@ -40,8 +40,8 @@ router.post("/login",[
 ],login)
 
 
-router.use(verifyToken);
 
+router.use(verifyToken);
 router.put("/update",UpdateUser)
 
 

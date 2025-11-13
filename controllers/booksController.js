@@ -44,6 +44,7 @@ export const AddBook = async (req, res) => {
         message: "New Book added",
         data: newBook,
       });
+      console.log(newBook)
     }
   } catch (err) {
     console.log(err, "error in the books adding");
