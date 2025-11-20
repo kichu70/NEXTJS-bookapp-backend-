@@ -3,8 +3,10 @@ import {
   adminUpdateBook,
   allBooks,
   allUser,
+  bookOfuser,
   deletBook,
   deletUser,
+  sinlgeBook,
   verifyUser,
 } from "../controllers/adminController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
@@ -20,7 +22,7 @@ router.put("/verify-user", verifyUser);
 // ---------------admin function towards book---------------
 
 router.get("/book", allBooks);
-router.get("/book-delete", deletBook);
+router.put("/book-delete", deletBook);
 router.put(
   "/book-update",
   [
@@ -49,5 +51,9 @@ router.put(
   ],
   adminUpdateBook
 );
+
+router.get("/single-book",sinlgeBook)
+router.get("/user-books",bookOfuser)
+
 
 export default router;

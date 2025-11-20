@@ -19,22 +19,38 @@ export const AddUser = async (req, res) => {
         msg: FieldErrors,
       });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const UserExist = await user.findOne({ name });
-    if (UserExist) {
-      return res.status(401).json({ message: "username already exist" });
+    else{
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const UserExist = await user.findOne({ name });
+      if (UserExist) {
+        return res.status(401).json({ message: "username already exist" });
+      }
+      else{
+        const EmailExist = await user.findOne({ email });
+        if (EmailExist) {
+          return res.status(401).json({ message: "email already exist" });
+        }
+        else{
+          const newUser = await user.create({
+            name,
+            password: hashedPassword,
+            email,
+            role:"User"
+          });
+          const token = jwt.sign(
+            {id:newUser._id,role:newUser.role,name:newUser.name,},process.env.JWT_SECRET, { expiresIn: "1d" }
+        ) 
+      const userData={id:newUser._id,name:newUser.name,email:newUser.email,role:newUser.role}
+        res.json({
+            message:"user created",
+            AccessToken:token,
+            userData:userData
+        })
+          // res.status(201).json({ message: "data added", data: newUser });
+        }
+      }
     }
-    const EmailExist = await user.findOne({ email });
-    if (EmailExist) {
-      return res.status(401).json({ message: "email already exist" });
-    }
-    const newUser = await user.create({
-      name,
-      password: hashedPassword,
-      email,
-      role:"User"
-    });
-    res.status(201).json({ message: "data added", data: newUser });
   } catch (err) {
     console.log(err, "error is in the addind user in backend");
     res.status(500).json({ message: "server is error to do add user backend" });
@@ -81,7 +97,7 @@ export const login =async(req,res)=>{
         const userData={id:user1._id,name:user1.name,email:user1.email,role:user1.role}
         res.json({
             message:"login successfull",
-            AccesToken:token,
+            AccessToken:token,
             userData:userData
         })
     }

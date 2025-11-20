@@ -12,8 +12,10 @@ import { verifyToken } from '../middlewares/verifyToken.js';
 
 const router =express.Router();
 router.get("/",allBooks)
-router.use(verifyToken)
+router.get("/used-book",oldBooks)
+router.get("/new-book",newBooks)
 
+router.use(verifyToken)
 router.post("/add-book",
     upload.array("image",10)
     ,
@@ -54,8 +56,6 @@ router.put("/upadte-book",[
     
 ],updateBook)
 router.put("/delete-book",deleteBook)
-router.get("/used-book",oldBooks)
-router.get("/new-book",newBooks)
 router.get("/single-book",sinlgeBook)
 
 router.post("/add-rating",addrating)

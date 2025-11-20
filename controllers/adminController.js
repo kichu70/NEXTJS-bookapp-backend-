@@ -82,24 +82,29 @@ export const verifyUser = async (req, res) => {
       if (!id) {
         return res.status(401).json({ message: "user not found" });
       } else {
-        const data = await user.find({
+        const data = await user.findOne({
           is_deleted: false,
           verify: false,
           _id: id,
         });
-        const data1 = data.find((p) => p.id === id);
-        if (!data1) {
-          console.log("Access denied");
-          return res.json({ message: "cant't verify this user" });
-        } else {
-          const verifyed = await user.findByIdAndUpdate(
-            id,
-            { verify: true },
-            { new: true }
-          );
-          res
-            .status(201)
-            .json({ message: "user have been verifyed !!", data: verifyed });
+        const data1 =await user.findOne({verify:true,_id:id})
+        if(data1){
+          res.json({message:"already verifyed"})
+        }
+        else{
+          if (!data) {
+            console.log("Access denied");
+            return res.json({ message: "cant't verify this user" });
+          } else {
+            const verifyed = await user.findByIdAndUpdate(
+              id,
+              { verify: true },
+              { new: true }
+            );
+            res
+              .status(201)
+              .json({ message: "user have been verifyed !!", data: verifyed });
+          }
         }
       }
     }
@@ -187,7 +192,7 @@ export const adminUpdateBook = async (req, res) => {
       });
     } else {
       const { id } = req.query;
-      const data = await Books.find({ _id: id, is_deleted: false });
+      const data = await Books.find({ _id: id });
 
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -224,5 +229,32 @@ export const adminUpdateBook = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "server Error", Error: err.message });
     console.error(err, "catch");
+  }
+};
+
+// ---------------------singlebook-------------
+export const sinlgeBook = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const book = await Books.find({ _id: id });
+
+    res.status(201).json({ message: "the single book is", data: book });
+  } catch (err) {
+    console.log(err, "error is in the fathing single book");
+  }
+};
+
+// -----------find book by user id-------------------
+
+export const bookOfuser = async (req, res) => {
+  try {
+    const { id } = req.query;
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    const book = await Books.find({ user: id });
+    res.status(201).json({ message: "the single user books are", data: book });
+  } catch (err) {
+    console.log(err, "error is in the backend fatching books of user");
   }
 };
